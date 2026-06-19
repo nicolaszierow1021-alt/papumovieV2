@@ -179,7 +179,7 @@ export default function ClientLayout({
       </aside>
 
       {/* Main content */}
-      <div className="admin-main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div className="admin-main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', minWidth: 0 }}>
 
         {/* Top bar */}
         <header style={{
@@ -224,7 +224,7 @@ export default function ClientLayout({
             <div style={{
               width: '36px', height: '36px', borderRadius: '50%',
               backgroundColor: '#E50914', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem', color: '#fff',
+              justifyContent: 'center', fontWeight: 800, fontSize: '0.9rem', color: '#fff', flexShrink: 0,
             }}>
               A
             </div>
@@ -232,7 +232,7 @@ export default function ClientLayout({
         </header>
 
         {/* Page content */}
-        <main style={{ flex: 1, padding: '2rem 1.5rem', maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
+        <main className="admin-main-inner" style={{ flex: 1, maxWidth: '1400px', width: '100%', margin: '0 auto' }}>
           {children}
         </main>
       </div>
@@ -248,6 +248,15 @@ export default function ClientLayout({
         }
         .admin-sidebar-close {
           display: flex !important;
+        }
+        .admin-main-inner {
+          padding: 1rem;
+        }
+
+        @media (min-width: 600px) {
+          .admin-main-inner {
+            padding: 2rem 1.5rem;
+          }
         }
 
         @media (min-width: 1024px) {
@@ -269,10 +278,6 @@ export default function ClientLayout({
         }
 
         .admin-sidebar a:hover {
-          background-color: rgba(255,255,255,0.05) !important;
-          color: #fff !important;
-        }
-        .admin-topbar-link:hover {
           background-color: rgba(255,255,255,0.05) !important;
           color: #fff !important;
         }
