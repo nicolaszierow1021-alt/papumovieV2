@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Movie {
+  id          String   @id @default(cuid())
+  title       String
+  coverUrl    String
+  bannerUrl   String?
+  downloadUrl String
+  type        String?  @default("movie")
+  synopsis    String?
+  year        String?
+  quality     String?
+  format      String?
+  resolution  String?
+  audio       String?  @default("Latino 5.1")
+  subtitles   String?  @default("Español")
+  size        String?
+  password    String?  @default("el_papu_cinefilo")
+  rating      String?  @default("8.0")
+  director    String?  @default("Desconocido")
+  duration    String?
+  trailerUrl  String?
+  createdAt   DateTime @default(now())
+}

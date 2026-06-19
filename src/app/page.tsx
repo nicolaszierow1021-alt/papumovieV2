@@ -1,66 +1,115 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
+import HeroCarousel from '@/components/HeroCarousel';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function Home({ searchParams }: { searchParams: Promise<{ filter?: string, search?: string }> }) {
+  const resolvedParams = await searchParams;
+  const filter = resolvedParams.filter;
+  const search = resolvedParams.search;
+  
+  let query = supabase.from('Movie').select('*').order('createdAt', { ascending: false });
+  
+  if (filter) {
+    query = query.eq('type', filter);
+  }
+  
+  if (search) {
+    query = query.ilike('title', `%${search}%`);
+  }
+
+  const { data: moviesData, error } = await query;
+  const movies = moviesData || [];
+
+
+  if (filter || search) {
+    const isTodoActive = !filter && !search;
+    const isPeliculasActive = filter === 'movie';
+    const isSeriesActive = filter === 'series';
+
+    return (
+      <div className="search-layout">
+        <div className="search-pills">
+          <Link href="/" className={`search-pill ${isTodoActive ? 'active' : ''}`}>TODO</Link>
+          <Link href="/?filter=movie" className={`search-pill ${isPeliculasActive ? 'active' : ''}`}>PELÍCULAS</Link>
+          <Link href="/?filter=series" className={`search-pill ${isSeriesActive ? 'active' : ''}`}>SERIES</Link>
+          <Link href="/?filter=accion" className="search-pill">ACCIÓN</Link>
+          <Link href="/?filter=terror" className="search-pill">TERROR</Link>
+          <Link href="/?filter=comedia" className="search-pill">COMEDIA</Link>
+        </div>
+
+        <div className="search-stats">
+          {movies.length} RESULTADO{movies.length !== 1 ? 'S' : ''}
+        </div>
+
+        <div className="search-section-title">
+          {filter ? filter.toUpperCase() : (search ? `BÚSQUEDA: ${search}` : 'TODO')}
+        </div>
+
+        <div className="search-grid">
+          {movies.map(movie => (
+            <Link href={`/movie/${movie.id}`} key={movie.id} className="search-card">
+              <div className="search-card-poster">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={movie.coverUrl} alt={movie.title} title={movie.title} />
+                <div className="movie-badge">
+                  <div className="star">★ {movie.rating || '8.0'}</div>
+                  <div>{movie.year || '2024'}</div>
+                </div>
+              </div>
+              <div className="search-card-title">{movie.title}</div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const featuredMovies = movies.slice(0, 5);
+  const recentMovies = movies.slice(0, 10);
+  const trendingMovies = movies.slice(5, 15);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <HeroCarousel movies={featuredMovies} />
+
+      {/* Movie Rows */}
+      <div style={{ marginTop: '-4vw', paddingBottom: '4rem' }}>
+
+        <section className="row-container">
+          <h2 className="heading-ELPAPUCINEFILO row-title">TENDENCIAS AHORA</h2>
+          <div className="movie-row">
+            {recentMovies.map(movie => (
+              <Link href={`/movie/${movie.id}`} key={movie.id} className="movie-poster">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={movie.coverUrl} alt={movie.title} title={movie.title} />
+                <div className="movie-badge">
+                  <div className="star">★ {movie.rating || '8.0'}</div>
+                  <div>{movie.year || '2024'}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="row-container" style={{ marginTop: '3rem' }}>
+          <h2 className="heading-ELPAPUCINEFILO row-title">RECOMENDADOS PARA TI</h2>
+          <div className="movie-row">
+            {trendingMovies.map(movie => (
+              <Link href={`/movie/${movie.id}`} key={movie.id} className="movie-poster">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={movie.coverUrl} alt={movie.title} title={movie.title} />
+                <div className="movie-badge">
+                  <div className="star">★ {movie.rating || '8.5'}</div>
+                  <div>{movie.year || '2024'}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+      </div>
+    </>
   );
 }
