@@ -1,8 +1,56 @@
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+
+const BASE_URL = 'https://papumoviemkv.store';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
+  const { id } = await params;
+  const { data: movie } = await supabase
+    .from('Movie')
+    .select('title, synopsis, coverUrl, year, director')
+    .eq('id', id)
+    .single();
+
+  if (!movie) {
+    return { title: 'Película no encontrada' };
+  }
+
+  const title = `${movie.title} (${movie.year || '2024'}) - Descargar MKV HD`;
+  const description =
+    movie.synopsis
+      ? movie.synopsis.slice(0, 160)
+      : `Descarga ${movie.title} en HD gratis. Dirigida por ${movie.director || 'Desconocido'}.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${BASE_URL}/movie/${id}`,
+      siteName: 'PAPU MOVIE',
+      images: movie.coverUrl
+        ? [{ url: movie.coverUrl, width: 500, height: 750, alt: movie.title }]
+        : [],
+      type: 'video.movie',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: movie.coverUrl ? [movie.coverUrl] : [],
+    },
+    alternates: {
+      canonical: `${BASE_URL}/movie/${id}`,
+    },
+  };
+}
 
 export default async function MovieDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

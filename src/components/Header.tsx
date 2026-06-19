@@ -44,7 +44,7 @@ export default function Header() {
           </div>
 
           <Link href="/" className="nav-brand">
-            ELPAPUCINEFIL<span>O</span>
+            PAPU <span>MOVIE</span>
           </Link>
 
           <div className="nav-right">

@@ -31,7 +31,7 @@ export default function Footer() {
       {/* Main Footer */}
       <div className="main-footer">
         <div className="footer-brand">
-          <h2 className="heading-ELPAPUCINEFILO">ELPAPUCINEFIL<span>O</span></h2>
+          <h2 className="heading-ELPAPUCINEFILO">PAPU <span>MOVIE</span></h2>
           <p>© {new Date().getFullYear()} Todos los derechos reservados.</p>
         </div>
         
