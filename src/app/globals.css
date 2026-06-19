@@ -995,11 +995,12 @@ a {
   }
 
   .nav-brand {
-    font-size: 1.8rem;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    font-size: 1.6rem;
+    position: relative;
+    left: auto;
+    transform: none;
     margin: 0;
+    white-space: nowrap;
   }
   
   .nav-right {
@@ -1014,10 +1015,12 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
     border: none;
     cursor: pointer;
-    padding: 0.5rem;
+    width: 40px;
+    height: 40px;
   }
 
   /* Hero Banner */
@@ -1025,33 +1028,45 @@ a {
     min-height: 500px;
     height: 70vh;
     padding: 0 1rem;
-    text-align: center;
-    align-items: center;
+  }
+
+  .carousel-slide {
+    justify-content: flex-end !important;
+    padding-bottom: 2.5rem !important;
   }
 
   .hero-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .hero-title {
     font-size: clamp(1.8rem, 6vw, 2.5rem);
     letter-spacing: -1px;
-    text-align: center;
-    -webkit-line-clamp: 4; /* On mobile allow an extra line if needed */
+    text-align: left;
+    -webkit-line-clamp: 4;
   }
 
   .hero-synopsis {
-    font-size: 0.95rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    -webkit-line-clamp: 3;
+    display: none; /* Hide synopsis on mobile */
   }
 
   .btn-pill-white {
     padding: 0.6rem 1.5rem;
     font-size: 0.95rem;
+    margin-top: 0.5rem;
+  }
+  
+  .btn-accent-line {
+    display: none;
+  }
+  
+  .carousel-dots {
+    left: auto !important;
+    right: 1.5rem !important;
+    bottom: 3.5rem !important;
+    transform: none !important;
   }
 
   /* Movie Rows */
@@ -1086,9 +1101,18 @@ a {
     flex: 0 0 250px !important;
   }
 
-  .heading-ELPAPUCINEFILO {
-    font-size: 2.5rem !important;
+  .details-info .heading-ELPAPUCINEFILO {
+    font-size: clamp(1.5rem, 8vw, 2.2rem) !important;
     text-align: center;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.1;
+  }
+  
+  .row-title {
+    font-size: 1.2rem !important;
+    text-align: left !important;
+    margin-bottom: 0.8rem;
   }
 
   .details-subinfo {
@@ -1293,4 +1317,55 @@ a {
 .carousel-dot.active {
   background-color: var(--accent-primary);
   transform: scale(1.3);
+}
+
+/* ==========================================================================
+   MOBILE BOTTOM NAV
+   ========================================================================== */
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 65px;
+    background-color: #0b0b0b;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 10000;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #666;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-item.active {
+    color: #E50914;
+  }
+
+  .nav-item svg {
+    width: 22px;
+    height: 22px;
+  }
+  
+  body {
+    padding-bottom: 65px;
+  }
 }

@@ -30,20 +30,35 @@ export async function saveBanner(formData: FormData) {
   }
 
   // Verifica si ya existe un anuncio
-  const { data: existing } = await supabase.from('Announcement').select('*').limit(1);
+  const { data: existing, error: existingError } = await supabase.from('Announcement').select('*').limit(1);
+
+  if (existingError) {
+    console.error("Error fetching existing banner:", existingError);
+    throw new Error('Error al buscar anuncio: ' + existingError.message);
+  }
 
   if (existing && existing.length > 0) {
     // Actualiza
-    await supabase.from('Announcement').update({
+    const { error: updateError } = await supabase.from('Announcement').update({
       message,
       isActive
     }).eq('id', existing[0].id);
+
+    if (updateError) {
+      console.error("Error updating banner:", updateError);
+      throw new Error('Error al actualizar anuncio: ' + updateError.message);
+    }
   } else {
     // Crea nuevo
-    await supabase.from('Announcement').insert({
+    const { error: insertError } = await supabase.from('Announcement').insert({
       message,
       isActive
     });
+
+    if (insertError) {
+      console.error("Error inserting banner:", insertError);
+      throw new Error('Error al crear anuncio: ' + insertError.message);
+    }
   }
 
   revalidatePath('/', 'layout');
