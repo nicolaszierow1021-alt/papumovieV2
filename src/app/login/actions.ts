@@ -9,6 +9,7 @@ export async function loginAction(password: string) {
   const cookieStore = await cookies();
   
   if (password === adminPassword) {
+    cookieStore.delete('papu_banner_auth'); // Eliminar sesión de banner si existe
     cookieStore.set('papu_admin_auth', 'true', { 
       path: '/', 
       maxAge: 60 * 60 * 24 * 7, // 1 week
@@ -19,6 +20,7 @@ export async function loginAction(password: string) {
   }
   
   if (password === bannerPassword) {
+    cookieStore.delete('papu_admin_auth'); // Eliminar sesión de admin si existe
     cookieStore.set('papu_banner_auth', 'true', { 
       path: '/', 
       maxAge: 60 * 60 * 24 * 7, // 1 week

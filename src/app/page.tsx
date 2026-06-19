@@ -1,6 +1,8 @@
 import { supabase } from '@/lib/supabase';
-import Link from 'next/link';
 import HeroCarousel from '@/components/HeroCarousel';
+import MovieRow from '@/components/MovieRow';
+import Link from 'next/link';
+import { PREDEFINED_LISTS } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,7 +11,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
   const filter = resolvedParams.filter;
   const search = resolvedParams.search;
   
-  let query = supabase.from('Movie').select('*').order('createdAt', { ascending: false });
+  let query = supabase.from('Movie').select('*');
   
   if (filter) {
     query = query.eq('type', filter);
@@ -66,9 +68,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
     );
   }
 
-  const featuredMovies = movies.slice(0, 5);
-  const recentMovies = movies.slice(0, 10);
-  const trendingMovies = movies.slice(5, 15);
+  // Destacar películas para el carrusel
+  const featuredMovies = movies.filter(m => m.bannerUrl && m.bannerUrl.trim() !== '').slice(0, 5);
+  
+  if (featuredMovies.length === 0 && movies.length > 0) {
+    featuredMovies.push(...movies.slice(0, 5));
+  }
 
   return (
     <>
@@ -76,39 +81,29 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
 
       {/* Movie Rows */}
       <div style={{ marginTop: '-4vw', paddingBottom: '4rem' }}>
+        
+        {/* "Recién añadidas" siempre primero */}
+        <div style={{ marginTop: '0' }}>
+          <MovieRow title="RECIÉN AÑADIDAS" movies={movies.slice(0, 15)} />
+        </div>
 
-        <section className="row-container">
-          <h2 className="heading-ELPAPUCINEFILO row-title">TENDENCIAS AHORA</h2>
-          <div className="movie-row">
-            {recentMovies.map(movie => (
-              <Link href={`/movie/${movie.id}`} key={movie.id} className="movie-poster">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={movie.coverUrl} alt={movie.title} title={movie.title} />
-                <div className="movie-badge">
-                  <div className="star">★ {movie.rating || '8.0'}</div>
-                  <div>{movie.year || '2024'}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+        {PREDEFINED_LISTS.map((list, index) => {
+          // Filtrar las películas que pertenecen a esta lista
+          const listMovies = movies.filter(m => {
+            if (!m.lists) return false;
+            const listsArray = m.lists.split(',').map((l: string) => l.trim());
+            return listsArray.includes(list.id);
+          });
 
-        <section className="row-container" style={{ marginTop: '3rem' }}>
-          <h2 className="heading-ELPAPUCINEFILO row-title">RECOMENDADOS PARA TI</h2>
-          <div className="movie-row">
-            {trendingMovies.map(movie => (
-              <Link href={`/movie/${movie.id}`} key={movie.id} className="movie-poster">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={movie.coverUrl} alt={movie.title} title={movie.title} />
-                <div className="movie-badge">
-                  <div className="star">★ {movie.rating || '8.5'}</div>
-                  <div>{movie.year || '2024'}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+          // Si la lista no tiene películas, no la mostramos
+          if (listMovies.length === 0) return null;
 
+          return (
+            <div key={list.id} style={{ marginTop: '3rem' }}>
+              <MovieRow title={list.title.toUpperCase()} movies={listMovies} />
+            </div>
+          );
+        })}
       </div>
     </>
   );

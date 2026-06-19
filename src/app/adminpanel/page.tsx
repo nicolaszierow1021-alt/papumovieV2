@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { deleteMovie } from '@/app/actions/movieActions';
+import DeleteButton from './DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -223,23 +224,7 @@ export default async function AdminDashboard() {
 
                           {/* Eliminar */}
                           <form action={deleteMovieWithId}>
-                            <button
-                              type="submit"
-                              title="Eliminar"
-                              style={{
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                width: '32px', height: '32px', borderRadius: '6px',
-                                backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
-                                color: '#ef4444', transition: 'all 0.2s', cursor: 'pointer',
-                              }}
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <polyline points="3 6 5 6 21 6"/>
-                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                                <path d="M10 11v6"/><path d="M14 11v6"/>
-                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                              </svg>
-                            </button>
+                            <DeleteButton variant="icon" />
                           </form>
                         </div>
                       </td>
@@ -299,14 +284,7 @@ export default async function AdminDashboard() {
                         Editar
                       </Link>
                       <form action={deleteMovieWithId}>
-                        <button type="submit" style={{
-                          display: 'flex', alignItems: 'center', gap: '0.3rem',
-                          padding: '0.35rem 0.7rem', borderRadius: '6px',
-                          backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
-                          color: '#ef4444', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer',
-                        }}>
-                          Eliminar
-                        </button>
+                        <DeleteButton variant="text" />
                       </form>
                     </div>
                   </div>
