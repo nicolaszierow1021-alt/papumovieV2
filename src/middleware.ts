@@ -4,13 +4,22 @@ import type { NextRequest } from 'next/server';
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
 
-  // Si intentamos entrar al admin panel
   if (url.pathname.startsWith('/adminpanel')) {
-    // Verificar si existe la cookie de autorización
+    const isAdminBanner = url.pathname === '/adminpanel/banner' || url.pathname.startsWith('/adminpanel/banner/');
+    const bannerAuthCookie = req.cookies.get('papu_banner_auth');
     const authCookie = req.cookies.get('papu_admin_auth');
 
+    // Rutas del banner (requiere clave nicebott / banner auth)
+    if (isAdminBanner) {
+      if (!bannerAuthCookie || bannerAuthCookie.value !== 'true') {
+        url.pathname = '/login';
+        return NextResponse.redirect(url);
+      }
+      return NextResponse.next();
+    }
+
+    // Rutas generales del admin (requiere clave LOTENGOGRANDE / admin auth)
     if (!authCookie || authCookie.value !== 'true') {
-      // Si no existe, redirigir a la página de login
       url.pathname = '/login';
       return NextResponse.redirect(url);
     }

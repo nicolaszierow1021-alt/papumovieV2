@@ -72,31 +72,114 @@ export default function TmdbAutoFill() {
   };
 
   return (
-    <div className="form-group full" style={{ backgroundColor: 'rgba(29, 78, 216, 0.1)', padding: '1.5rem', borderRadius: '8px', border: '1px dashed #1d4ed8', marginBottom: '2rem' }}>
-      <label htmlFor="tmdbId" className="form-label" style={{ color: '#60a5fa' }}>⚡ Auto-Completar con TMDB</label>
-      <div style={{ display: 'flex', gap: '1rem' }}>
+    <div className="tmdb-autofill-container">
+      <label htmlFor="tmdbId" className="tmdb-autofill-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Auto-Completar con TMDB
+      </label>
+      <div className="tmdb-autofill-flex">
         <input 
           type="text" 
           id="tmdbId" 
           value={tmdbId}
           onChange={(e) => setTmdbId(e.target.value)}
-          className="form-input" 
-          placeholder="Pega aquí el ID de TMDB (Ej: 460465)" 
-          style={{ flex: 1 }}
+          className="tmdb-autofill-input" 
+          placeholder="ID de TMDB (Ej: 460465)" 
         />
         <button 
           type="button" 
           onClick={handleAutoFill} 
           disabled={isLoading}
-          className="btn-primary" 
-          style={{ backgroundColor: '#1d4ed8', border: 'none', padding: '0 2rem' }}
+          className="tmdb-autofill-btn"
         >
           {isLoading ? 'Cargando...' : 'Autocompletar'}
         </button>
       </div>
-      <p style={{ fontSize: '0.85rem', color: '#9ca3af', marginTop: '0.5rem' }}>
-        Selecciona primero si es Película o Serie abajo, luego pega el ID numérico de la URL de themoviedb.org y presiona el botón.
+      <p className="tmdb-autofill-hint">
+        Selecciona primero si es Película o Serie, luego pega el ID numérico de themoviedb.org
       </p>
+
+      <style>{`
+        .tmdb-autofill-container {
+          background-color: rgba(29, 78, 216, 0.08);
+          padding: 1.25rem;
+          border-radius: 12px;
+          border: 1px dashed rgba(59, 130, 246, 0.4);
+          margin-bottom: 2rem;
+        }
+        .tmdb-autofill-label {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #60a5fa;
+          font-weight: 700;
+          font-size: 0.85rem;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+          margin-bottom: 0.75rem;
+        }
+        .tmdb-autofill-flex {
+          display: flex;
+          gap: 0.75rem;
+          align-items: center;
+        }
+        .tmdb-autofill-input {
+          flex: 1;
+          background-color: #0f0f0f;
+          border: 1px solid #1e3a8a;
+          color: #e5e5e5;
+          padding: 0.65rem 0.9rem;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          font-family: inherit;
+          min-width: 0; /* Prevents input from overflowing flex container */
+          transition: border-color 0.2s;
+        }
+        .tmdb-autofill-input:focus {
+          border-color: #3b82f6;
+          outline: none;
+        }
+        .tmdb-autofill-btn {
+          background-color: #1d4ed8;
+          color: #fff;
+          border: none;
+          padding: 0.7rem 1.5rem;
+          border-radius: 8px;
+          font-weight: 700;
+          font-size: 0.9rem;
+          cursor: pointer;
+          font-family: inherit;
+          white-space: nowrap;
+          transition: background-color 0.2s;
+        }
+        .tmdb-autofill-btn:hover:not(:disabled) {
+          background-color: #2563eb;
+        }
+        .tmdb-autofill-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+        .tmdb-autofill-hint {
+          font-size: 0.75rem;
+          color: #888;
+          margin-top: 0.75rem;
+          line-height: 1.4;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+          .tmdb-autofill-flex {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .tmdb-autofill-btn {
+            width: 100%;
+            padding: 0.8rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }

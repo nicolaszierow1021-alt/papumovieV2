@@ -18,8 +18,8 @@ export default function LoginPage() {
 
     try {
       const res = await loginAction(password);
-      if (res.success) {
-        router.push('/adminpanel');
+      if (res.success && res.redirectUrl) {
+        router.push(res.redirectUrl);
       } else {
         setError(res.error || 'Error de autenticación');
       }

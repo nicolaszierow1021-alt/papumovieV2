@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Banner from "@/components/Banner";
 
 const BASE_URL = 'https://papumoviemkv.store';
 
@@ -76,6 +77,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
+        <Banner />
         <Header />
         <main>{children}</main>
         <Footer />
