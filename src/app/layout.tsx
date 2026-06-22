@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Banner from "@/components/Banner";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import AdScript from "@/components/AdScript";
 
 const BASE_URL = 'https://papumoviemkv.store';
 
@@ -77,12 +78,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+      </head>
       <body>
         <Banner />
         <Header />
         <main>{children}</main>
         <Footer />
         <MobileBottomNav />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="https://tuxedoarbourannouncement.com/34/7e/82/347e823532a54f0fc9405265225f281e.js"></script>
       </body>
     </html>
   );

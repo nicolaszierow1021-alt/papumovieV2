@@ -5,11 +5,20 @@ import DeleteButton from './DeleteButton';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminDashboard() {
-  const { data: moviesData } = await supabase
+export default async function AdminDashboard({ searchParams }: { searchParams?: Promise<{ search?: string }> }) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const search = resolvedParams.search;
+
+  let query = supabase
     .from('Movie')
     .select('*')
     .order('createdAt', { ascending: false });
+
+  if (search) {
+    query = query.ilike('title', `%${search}%`);
+  }
+
+  const { data: moviesData } = await query;
 
   const movies = moviesData || [];
   const totalPeliculas = movies.filter((m) => m.type !== 'series').length;
@@ -27,6 +36,31 @@ export default async function AdminDashboard() {
             Gestiona tu catálogo de películas y series
           </p>
         </div>
+
+        {/* Search Bar */}
+        <form method="get" action="/adminpanel" style={{ display: 'flex', flex: '1 1 250px', maxWidth: '400px', alignItems: 'center', backgroundColor: '#141414', border: '1px solid #333', borderRadius: '8px', padding: '0.2rem 0.5rem' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" style={{ marginLeft: '0.5rem' }}>
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            name="search" 
+            defaultValue={search || ''}
+            placeholder="Buscar película o serie..." 
+            style={{ flex: 1, backgroundColor: 'transparent', border: 'none', color: '#fff', padding: '0.6rem 0.5rem', outline: 'none', fontSize: '0.9rem', width: '100%' }}
+          />
+          {search && (
+            <Link href="/adminpanel" title="Limpiar búsqueda" style={{ color: '#888', padding: '0.4rem', textDecoration: 'none', display: 'flex', alignItems: 'center', transition: 'color 0.2s' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </Link>
+          )}
+          <button type="submit" style={{ display: 'none' }}>Buscar</button>
+        </form>
+
         <Link
           href="/adminpanel/add"
           style={{

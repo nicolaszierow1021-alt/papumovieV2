@@ -3,6 +3,7 @@ import HeroCarousel from '@/components/HeroCarousel';
 import MovieRow from '@/components/MovieRow';
 import Link from 'next/link';
 import { PREDEFINED_LISTS } from '@/lib/constants';
+import AdBanner from '@/components/AdBanner';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,11 +69,18 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
     );
   }
 
-  // Destacar películas para el carrusel
-  const featuredMovies = movies.filter(m => m.bannerUrl && m.bannerUrl.trim() !== '').slice(0, 5);
+  // Destacar películas para el carrusel (usando la lista 'carrusel')
+  const featuredMovies = movies.filter(m => {
+    if (!m.lists) return false;
+    return m.lists.split(',').map((l: string) => l.trim()).includes('carrusel');
+  }).slice(0, 10); // Permitimos hasta 10 en el carrusel si el admin los añade
   
   if (featuredMovies.length === 0 && movies.length > 0) {
-    featuredMovies.push(...movies.slice(0, 5));
+    const fallbackMovies = movies.filter(m => m.bannerUrl && m.bannerUrl.trim() !== '');
+    featuredMovies.push(...fallbackMovies.slice(0, 5));
+    if (featuredMovies.length === 0) {
+      featuredMovies.push(...movies.slice(0, 5));
+    }
   }
 
   return (
@@ -87,23 +95,24 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
           <MovieRow title="RECIÉN AÑADIDAS" movies={movies.slice(0, 15)} />
         </div>
 
-        {PREDEFINED_LISTS.map((list, index) => {
-          // Filtrar las películas que pertenecen a esta lista
-          const listMovies = movies.filter(m => {
-            if (!m.lists) return false;
-            const listsArray = m.lists.split(',').map((l: string) => l.trim());
-            return listsArray.includes(list.id);
-          });
+        {(() => {
+          const renderedLists = PREDEFINED_LISTS.filter(list => list.id !== 'carrusel').map(list => {
+            const listMovies = movies.filter(m => {
+              if (list.id === 'accion' && m.type === 'accion') return true;
+              if (!m.lists) return false;
+              const listsArray = m.lists.split(',').map((l: string) => l.trim());
+              return listsArray.includes(list.id);
+            });
+            return { list, listMovies };
+          }).filter(item => item.listMovies.length > 0);
 
-          // Si la lista no tiene películas, no la mostramos
-          if (listMovies.length === 0) return null;
-
-          return (
+          return renderedLists.map(({ list, listMovies }, index) => (
             <div key={list.id} style={{ marginTop: '3rem' }}>
+              {index === 0 && <AdBanner />}
               <MovieRow title={list.title.toUpperCase()} movies={listMovies} />
             </div>
-          );
-        })}
+          ));
+        })()}
       </div>
     </>
   );
