@@ -10,24 +10,8 @@ interface Props {
 
 export default function MaintenanceBlocker({ active, message }: Props) {
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    
-    // Si el mantenimiento está activo y no estamos en adminnico, bloqueamos el scroll del body
-    if (active && pathname && !pathname.startsWith('/adminnico')) {
-      document.body.style.overflow = 'hidden';
-    }
-    
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [active, pathname]);
-
-  // No renderizamos nada durante SSR para evitar destellos, 
-  // ni tampoco si está apagado, ni en la ruta secreta
-  if (!mounted || !active || (pathname && pathname.startsWith('/adminnico'))) {
+  // Si está apagado o estamos en la ruta secreta, no mostramos el bloqueador
+  if (!active || (pathname && pathname.startsWith('/adminnico'))) {
     return null;
   }
 

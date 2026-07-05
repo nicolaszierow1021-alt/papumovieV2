@@ -50,8 +50,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
           <div className="movie-grid">
             {movies.map(movie => (
               <Link href={`/movie/${movie.id}`} key={movie.id} className="poster-card">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={movie.bannerUrl || movie.coverUrl} alt={movie.title} />
+                <picture>
+                  <source media="(max-width: 768px)" srcSet={movie.coverUrl} />
+                  <img src={movie.bannerUrl || movie.coverUrl} alt={movie.title} />
+                </picture>
                 <div className="card-overlay">
                   {movie.logoUrl ? (
                     <div className="card-logo-wrapper">
@@ -76,6 +78,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M8 5v14l11-7z" />
                   </svg>
+                </div>
+
+                <div className="mobile-card-details">
+                  <div className="mobile-card-meta">
+                    <span className="mobile-rating">★ {movie.rating || 'N/A'}</span>
+                    <span>{movie.year || '2024'}</span>
+                  </div>
+                  <div className="mobile-card-genres">{movie.genres || 'Drama, Acción'}</div>
+                  <div className="mobile-card-play-btn">JUGAR ↗</div>
                 </div>
               </Link>
             ))}

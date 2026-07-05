@@ -1200,3 +1200,117 @@ body {
   0% { background-position: 300% center; }
   100% { background-position: 0% center; }
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS
+   ========================================================================== */
+.mobile-card-details {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hero-wrapper {
+    height: 90vh;
+  }
+  .hero-backdrop {
+    object-position: center 20%;
+  }
+  .hero-info {
+    left: 5%;
+    max-width: 90%;
+    top: auto;
+    bottom: 22%;
+    transform: none;
+    align-items: center;
+    text-align: center;
+  }
+  .hero-meta {
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .hero-thumbs {
+    bottom: 20px;
+    padding: 0 10px;
+    gap: 8px;
+  }
+  .hero-thumb-btn {
+    width: 45px;
+  }
+  .movie-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 15px 40px;
+  }
+  .poster-card {
+    width: 100%;
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+  }
+  .poster-card > picture, .poster-card > picture > img {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .overlap-row {
+    margin-top: -5vh;
+    padding: 0 15px;
+  }
+  .overlap-track {
+    gap: 10px;
+  }
+  .overlap-track .poster-card {
+    width: 140px;
+  }
+  .site-header {
+    padding: 0 20px;
+  }
+  .animated-section-title {
+    font-size: 16px;
+    padding: 0 15px;
+    margin-bottom: 15px;
+  }
+  .card-overlay, .poster-card-play {
+    display: none !important;
+  }
+  
+  /* Mobile details below the poster */
+  .mobile-card-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    text-align: left;
+  }
+  .mobile-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 4px;
+  }
+  .mobile-rating {
+    color: var(--rating-green);
+    font-weight: 600;
+  }
+  .mobile-card-genres {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mobile-card-play-btn {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.9);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-transform: uppercase;
+  }
+}
