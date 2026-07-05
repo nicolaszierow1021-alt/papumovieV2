@@ -3,7 +3,8 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Banner from "@/components/Banner";
-import AdScript from "@/components/AdScript";
+import MaintenanceBlocker from "@/components/MaintenanceBlocker";
+import { getMaintenanceStatus } from "@/app/actions/maintenanceActions";
 
 const BASE_URL = 'https://papumoviemkv.store';
 
@@ -85,16 +86,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const maintenanceStatus = await getMaintenanceStatus();
+
   return (
     <html lang="es" className="dark-mode">
       <head>
       </head>
       <body>
+        <MaintenanceBlocker active={maintenanceStatus.active} message={maintenanceStatus.message} />
         <Header />
         <Banner />
         <main>{children}</main>
