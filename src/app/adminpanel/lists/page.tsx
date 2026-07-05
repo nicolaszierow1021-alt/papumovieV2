@@ -18,7 +18,7 @@ export default async function ListsAdminPage() {
               backgroundColor: '#111', padding: '1.5rem', borderRadius: '12px', border: '1px solid #222'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: `linear-gradient(to bottom right, ${list.color === 'from-red-600 to-orange-600' ? '#dc2626, #ea580c' : list.color === 'from-gray-800 to-black' ? '#1f2937, #000' : list.color === 'from-purple-600 to-indigo-600' ? '#9333ea, #4f46e5' : '#2563eb, #0891b2'})` }}></div>
+                <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'linear-gradient(135deg, #FF1515, #ff6b6b)' }}></div>
                 <div>
                   <h3 style={{ fontSize: '1.4rem', margin: '0 0 0.2rem 0' }}>{list.title}</h3>
                   <div style={{ fontSize: '0.85rem', color: '#666' }}>ID Interno: {list.id}</div>

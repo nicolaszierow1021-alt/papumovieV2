@@ -10,43 +10,20 @@ export default function Footer() {
   }
 
   return (
-    <footer className="footer-wrapper">
-      {/* Telegram Banner */}
-      <div className="telegram-banner">
-        <div className="telegram-content">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="telegram-icon">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
-          <div className="telegram-text">
-            <h3>¡Únete a nuestra Comunidad!</h3>
-            <p>No te pierdas ningún estreno. Únete al canal oficial de Telegram.</p>
+    <footer style={{ background: '#080b0f', padding: '60px 40px', marginTop: 'auto', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+          <div style={{ fontSize: '24px', fontWeight: 700, letterSpacing: '2px', color: '#fff' }}>
+              <Link href="/" title="PAPU MOVIE">PAPU<b style={{ fontWeight: 900 }}>MOVIE</b></Link>
           </div>
-        </div>
-        <a href="https://t.me/+3IdHSZT-qDIyYmRh" target="_blank" rel="noopener noreferrer" className="btn-telegram">
-          UNIRME AHORA
-        </a>
-      </div>
-
-      {/* Main Footer */}
-      <div className="main-footer">
-        <div className="footer-brand">
-          <h2 className="heading-ELPAPUCINEFILO">PAPU <span>MOVIE</span></h2>
-          <p>© {new Date().getFullYear()} Todos los derechos reservados.</p>
-        </div>
-        
-        <div className="footer-links">
-          <Link href="/">Inicio</Link>
-          <Link href="/?filter=movie">Películas</Link>
-          <Link href="/?filter=series">Series</Link>
-        </div>
-        
-        <div className="footer-disclaimer">
-          <p>
-            Ningún archivo se almacena en nuestros servidores. 
-            Todo el contenido es proporcionado por terceros no afiliados.
+          <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', display: 'flex', gap: '20px' }}>
+            <Link href="/">Inicio</Link>
+            <Link href="/?filter=movie">Películas</Link>
+            <Link href="/?filter=series">Series</Link>
+            <a href="https://t.me/+3IdHSZT-qDIyYmRh" target="_blank" rel="noopener noreferrer">Telegram</a>
+          </div>
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '12px', marginTop: '20px', textAlign: 'center' }}>
+            © {new Date().getFullYear()} PAPU MOVIE. Desarrollado por ZierowStudio.
           </p>
-        </div>
       </div>
     </footer>
   );

@@ -2,6 +2,9 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import { cleanTitle } from '../../../utils/cleanTitle';
+import TrailerPlayer from '@/components/movie/TrailerPlayer';
+import DownloadModal from '@/components/movie/DownloadModal';
 
 const BASE_URL = 'https://papumoviemkv.store';
 
@@ -75,9 +78,8 @@ export default async function MovieDetailsPage({ params }: { params: Promise<{ i
     
   const relatedMovies = relatedMoviesData || [];
 
-
   // Fetch Cast on-the-fly using TMDB Search
-  let cast: any[] = [];
+  let cast: { id: number; name: string; character: string; profile_path: string | null }[] = [];
   try {
     const apiKey = 'c71d55c790adcb0fa9ea6ebcbc9a61a7';
     const isSerie = movie.type === 'series';
@@ -106,191 +108,158 @@ export default async function MovieDetailsPage({ params }: { params: Promise<{ i
     console.error("Error fetching cast", error);
   }
 
+  let downloadLinks: { id: string; server: string; details: string; url: string }[] = [];
+  if (movie.downloadUrl) {
+    try {
+      const parsed = JSON.parse(movie.downloadUrl);
+      if (Array.isArray(parsed)) {
+        downloadLinks = parsed;
+      } else {
+        downloadLinks = [{ id: '1', server: 'Descarga', details: 'Principal', url: movie.downloadUrl }];
+      }
+    } catch (e) {
+      downloadLinks = [{ id: '1', server: 'Descarga', details: 'Principal', url: movie.downloadUrl }];
+    }
+  }
+
   return (
-    <div style={{ backgroundColor: 'var(--bg-base)', minHeight: '100vh', paddingBottom: '4rem', overflowX: 'hidden' }}>
-      {/* Dark Blurred Backdrop */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100vh', zIndex: 0, opacity: 0.3 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={movie.bannerUrl || movie.coverUrl}
-          alt="Backdrop"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'blur(30px) brightness(0.4)', transform: 'scale(1.2)' }}
-        />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(11,11,11,1) 0%, rgba(11,11,11,0.6) 40%, transparent 100%)' }}></div>
+    <div className="movie-detail-page">
+      
+      {/* Top Logo Section */}
+      <div className="movie-detail-header-logo">
+        {movie.logoUrl ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={movie.logoUrl} alt={movie.title} className="detail-logo-img" />
+        ) : (
+          <h1 className="detail-logo-text">{movie.title}</h1>
+        )}
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @media (max-width: 900px) {
-          .details-flex {
-            flex-direction: column !important;
-            align-items: center !important;
-            gap: 2rem !important;
-          }
-          .details-poster {
-            flex: 0 0 auto !important;
-            width: 100% !important;
-            max-width: 350px !important;
-            margin: 0 auto !important;
-          }
-          .details-info {
-            padding-top: 0 !important;
-          }
-        }
-      `}} />
+      {/* Cinematic Player Container */}
+      <div className="movie-player-wrapper">
+        <TrailerPlayer movie={{
+          title: movie.title,
+          bannerUrl: movie.bannerUrl,
+          coverUrl: movie.coverUrl,
+          trailerUrl: movie.trailerUrl,
+          year: movie.year,
+          rating: movie.rating,
+          genres: movie.lists // Usamos las categorías como género visual
+        }} />
+      </div>
 
-      <div className="container details-container" style={{ position: 'relative', zIndex: 10, paddingTop: '85px', paddingLeft: '4%', paddingRight: '4%' }}>
+      {/* Content Section (Links, Cast, Related) */}
+      <div className="movie-detail-content" id="enlaces-descarga">
+        
+        <div className="movie-content-grid">
+          {/* Columna Izquierda: Sinopsis y Reparto */}
+          <div className="movie-content-left">
+            <div className="info-section">
+              <h3>Sinopsis</h3>
+              <p>{movie.synopsis || "Sinopsis no disponible en español para este título."}</p>
+              {movie.director && (
+                <div className="director-info">
+                  <span>Director:</span> {movie.director}
+                </div>
+              )}
+            </div>
 
-        <Link href="/" className="details-back">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </Link>
-
-        <div className="details-flex" style={{ display: 'flex', gap: '4rem', alignItems: 'flex-start' }}>
-
-          {/* Main Poster */}
-          <div className="details-poster" style={{ flex: '0 0 350px', width: '350px' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={movie.coverUrl}
-              alt={movie.title}
-              style={{ width: '100%', borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.8)' }}
-            />
+            {cast.length > 0 && (
+              <div className="info-section">
+                <h3>Reparto Principal</h3>
+                <div className="cast-list">
+                  {cast.slice(0, 8).map(actor => (
+                    <div key={actor.id} className="cast-avatar">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img 
+                        src={actor.profile_path ? `https://image.tmdb.org/t/p/w185${actor.profile_path}` : 'https://via.placeholder.com/150x150/1a1a1a/ffffff?text=No+Photo'} 
+                        alt={actor.name} 
+                      />
+                      <div className="cast-names">
+                        <span className="cast-real-name">{actor.name}</span>
+                        <span className="cast-character-name">{actor.character}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Movie Details */}
-          <div className="details-info" style={{ flex: '1', paddingTop: '1rem', maxWidth: '800px', width: '100%' }}>
+          {/* Columna Derecha: Tarjeta de Descarga Premium */}
+          <div className="movie-content-right">
+            <div className="premium-download-card">
+              <h3>Opciones de Descarga</h3>
+              
+              <div className="tech-specs-grid">
+                <div className="spec-item">
+                  <span className="spec-label">Resolución</span>
+                  <span className="spec-value">{movie.resolution || '1080p HD'}</span>
+                </div>
+                <div className="spec-item">
+                  <span className="spec-label">Formato</span>
+                  <span className="spec-value">{movie.format || 'MKV'}</span>
+                </div>
+                <div className="spec-item">
+                  <span className="spec-label">Audio</span>
+                  <span className="spec-value">{movie.audio || 'Español Latino'}</span>
+                </div>
+                <div className="spec-item">
+                  <span className="spec-label">Contraseña</span>
+                  <span className="spec-value highlight">{movie.password || 'el_papu_cinefilo'}</span>
+                </div>
+              </div>
 
-            <div className="gold-label">
-              ★ NOMINADA A PREMIOS DE LA ACADEMIA
-            </div>
-
-            <h1 className="heading-ELPAPUCINEFILO" style={{ fontSize: '4.5rem', letterSpacing: '-1px', marginBottom: '1rem', lineHeight: 1 }}>
-              {movie.title}
-            </h1>
-
-            <div className="details-subinfo">
-              <span className="details-year">{movie.year || '2024'}</span>
-              <span className="details-rating">★ {movie.rating || '8.0'}</span>
-              {movie.duration && (
-                <span className="details-duration" style={{ color: 'var(--text-muted)' }}>• {movie.duration}</span>
-              )}
-              <span className="details-director">Director: {movie.director || 'Desconocido'}</span>
-            </div>
-
-            <div style={{ marginBottom: '2.5rem', marginTop: '1.5rem' }}>
-              <p style={{ fontSize: '1.1rem', lineHeight: 1.6, color: '#A3A3A3' }}>
-                {movie.synopsis || "Los campeones favoritos de los fans se enfrentan entre sí en la batalla definitiva, sangrienta y sin reglas, para derrotar el oscuro dominio que amenaza con destruir el Reino de la Tierra y a sus defensores."}
-              </p>
-            </div>
-
-            {/* Action Buttons Row */}
-            <div className="action-row">
-              <a href={movie.downloadUrl} target="_blank" rel="noopener noreferrer" className="btn-pill-red">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z" />
-                </svg>
-                {movie.type === 'series' ? 'DESCARGAR SERIE' : 'DESCARGAR PELICULA'}
-              </a>
+              <DownloadModal movieTitle={movie.title} downloadLinks={downloadLinks} />
 
               {movie.trailerUrl && (
-                <a href={movie.trailerUrl} target="_blank" rel="noopener noreferrer" className="btn-pill-outline">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                  </svg>
-                  VER TRAILER
+                <a href={movie.trailerUrl} target="_blank" rel="noopener noreferrer" className="premium-trailer-btn">
+                  Ver Tráiler Oficial
                 </a>
               )}
-
-              <div className="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-              </div>
-              <div className="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              </div>
-              <div className="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-              </div>
-              <div className="icon-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-              </div>
             </div>
-
-            {/* Technical Specifications Grid (Kept for functionality) */}
-            <div style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-              <div className="details-tech-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.5rem' }}>
-                <div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Formato</div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{movie.format || 'N/A'}</div>
-                </div>
-                <div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Resolución</div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{movie.resolution || 'N/A'}</div>
-                </div>
-                <div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Audio</div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{movie.audio || 'N/A'}</div>
-                </div>
-                <div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Subtítulos</div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{movie.subtitles || 'N/A'}</div>
-                </div>
-                <div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase' }}>Contraseña</div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--accent-primary)' }}>{movie.password || 'el_papu_cinefilo'}</div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
 
-        {/* REPARTO PRINCIPAL */}
-        {cast.length > 0 && (
-          <div style={{ marginTop: '5rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2rem' }}>
-            <h2 className="heading-ELPAPUCINEFILO row-title" style={{ fontSize: '1.2rem', color: '#A3A3A3', letterSpacing: '2px' }}>
-              REPARTO PRINCIPAL
-            </h2>
-            <div className="cast-list">
-              {cast.map(actor => (
-                <div key={actor.id} className="cast-item">
-                  <div className="cast-img-wrapper">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={actor.profile_path ? `https://image.tmdb.org/t/p/w185${actor.profile_path}` : 'https://via.placeholder.com/150x150/1a1a1a/ffffff?text=No+Photo'} 
-                      alt={actor.name} 
-                      className="cast-img"
-                    />
+        {/* Películas Relacionadas */}
+        {relatedMovies.length > 0 && (
+          <div className="related-movies-section">
+            <h2 className="animated-section-title">También te puede gustar</h2>
+            <div className="movie-grid">
+              {relatedMovies.map(related => (
+                <Link href={`/movie/${related.id}`} key={related.id} className="poster-card">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={related.bannerUrl || related.coverUrl} alt={related.title} />
+                  
+                  <div className="card-overlay">
+                    {related.logoUrl ? (
+                      <div className="card-logo-wrapper">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={related.logoUrl} alt={cleanTitle(related.title)} className="card-logo-img" />
+                      </div>
+                    ) : (
+                      <div className="card-title-fallback">
+                        {cleanTitle(related.title)}
+                      </div>
+                    )}
+                    <div className="card-meta-hover">
+                      <div className="card-meta-row">
+                        <span style={{ color: 'var(--rating-green)' }}>★ {related.rating || 'N/A'}</span>
+                        <span className="dot">·</span>
+                        <span>{related.duration || (related.type === 'series' ? 'Serie' : '1h 30m')}</span>
+                        <span className="dot">·</span>
+                        <span>{related.year || '2024'}</span>
+                      </div>
+                      <div className="card-genres-hover">
+                        {related.genres || 'Drama, Acción'}
+                      </div>
+                    </div>
                   </div>
-                  <div className="cast-name">{actor.name}</div>
-                  <div className="cast-character">{actor.character}</div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
         )}
-
-        {/* TAMBIÉN TE PUEDE GUSTAR */}
-        <div style={{ marginTop: '5rem', marginBottom: '2rem' }}>
-          <h2 className="heading-ELPAPUCINEFILO row-title" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ display: 'inline-block', width: '4px', height: '24px', backgroundColor: 'var(--accent-primary)', borderRadius: '2px' }}></span>
-            TAMBIÉN TE PUEDE GUSTAR
-          </h2>
-          <div className="movie-row">
-            {relatedMovies.map(related => (
-              <Link href={`/movie/${related.id}`} key={related.id} className="movie-poster">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={related.coverUrl} alt={related.title} title={related.title} />
-                <div className="movie-badge">
-                  <div className="star">★ {related.rating || '8.0'}</div>
-                  <div>{related.year || '2024'}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
 
       </div>
     </div>

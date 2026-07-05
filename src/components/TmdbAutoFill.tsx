@@ -25,8 +25,8 @@ export default function TmdbAutoFill() {
       const isSerie = typeEl?.value === 'series';
 
       const url = isSerie 
-        ? `https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${apiKey}&language=es&append_to_response=credits,videos`
-        : `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${apiKey}&language=es&append_to_response=credits,videos`;
+        ? `https://api.themoviedb.org/3/tv/${tmdbId}?api_key=${apiKey}&language=es&append_to_response=credits,videos,images&include_image_language=es,en,null`
+        : `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${apiKey}&language=es&append_to_response=credits,videos,images&include_image_language=es,en,null`;
 
       const response = await fetch(url);
       
@@ -47,16 +47,27 @@ export default function TmdbAutoFill() {
           fillInputs('year', (data.release_date || '').slice(0, 4));
           fillInputs('duration', data.runtime ? `${data.runtime} Min.` : '');
 
-          const director = data.credits?.crew?.find((member: any) => member.job === 'Director')?.name;
+          const director = data.credits?.crew?.find((member: { job?: string; name?: string }) => member.job === 'Director')?.name;
           fillInputs('director', director || 'Desconocido');
         }
 
-        const trailer = data.videos?.results?.find((vid: any) => vid.type === 'Trailer' && vid.site === 'YouTube');
+        const trailer = data.videos?.results?.find((vid: { type?: string; site?: string; key?: string }) => vid.type === 'Trailer' && vid.site === 'YouTube');
         fillInputs('trailerUrl', trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : '');
 
         fillInputs('rating', data.vote_average ? data.vote_average.toFixed(1) : '');
         fillInputs('coverUrl', data.poster_path ? `https://image.tmdb.org/t/p/original${data.poster_path}` : '');
         fillInputs('bannerUrl', data.backdrop_path ? `https://image.tmdb.org/t/p/original${data.backdrop_path}` : ''); 
+
+        const logos = data.images?.logos;
+        if (logos && logos.length > 0) {
+          const esLogo = logos.find((l: any) => l.iso_639_1 === 'es');
+          const enLogo = logos.find((l: any) => l.iso_639_1 === 'en');
+          const fallbackLogo = logos[0];
+          const bestLogo = esLogo || enLogo || fallbackLogo;
+          fillInputs('logoUrl', `https://image.tmdb.org/t/p/original${bestLogo.file_path}`);
+        } else {
+          fillInputs('logoUrl', '');
+        }
 
       } else if (response.status === 404) {
         alert('No existe en TMDB. Revisa el ID o si seleccionaste Película/Serie correctamente.');

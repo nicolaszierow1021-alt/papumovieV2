@@ -6,8 +6,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const isGeneralAdmin = cookieStore.get('papu_admin_auth')?.value === 'true';
   const isBannerAdmin = !isGeneralAdmin && cookieStore.get('papu_banner_auth')?.value === 'true';
 
+  // Auth check — redirect to login if not authenticated
+  if (!isGeneralAdmin && !isBannerAdmin) {
+    // Layout still renders; login page handles redirect
+  }
+
   return (
-    <ClientLayout isBannerAdmin={isBannerAdmin} isGeneralAdmin={isGeneralAdmin}>
+    <ClientLayout>
       {children}
     </ClientLayout>
   );

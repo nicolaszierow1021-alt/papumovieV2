@@ -1,73 +1,107 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { cleanTitle } from '../utils/cleanTitle';
 
 interface Movie {
   id: string;
   title: string;
   synopsis: string | null;
   coverUrl: string;
-  bannerUrl: string | null;
+  bannerUrl?: string | null;
+  logoUrl?: string | null;
+  rating?: string;
+  year?: string;
+  type?: string;
+  duration?: string;
+  genres?: string;
 }
 
 export default function HeroCarousel({ movies }: { movies: Movie[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (movies.length <= 1) return;
-
+    if (!movies || movies.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % movies.length);
-    }, 6000); // 6 seconds
-
+    }, 6000);
     return () => clearInterval(interval);
-  }, [movies.length]);
+  }, [movies?.length]);
 
   if (!movies || movies.length === 0) return null;
 
+  const currentMovie = movies[currentIndex];
+
   return (
-    <section className="hero-banner carousel-container">
-      {movies.map((movie, index) => {
-        const isActive = index === currentIndex;
-        return (
-          <div 
+    <section className="hero-wrapper">
+      {/* Backdrops con Crossfade */}
+      {movies.map((movie, index) => (
+        <div 
+          key={movie.id} 
+          className="hero-backdrop-layer" 
+          style={{ 
+            opacity: index === currentIndex ? 1 : 0,
+            pointerEvents: index === currentIndex ? 'auto' : 'none'
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
+            src={movie.bannerUrl || movie.coverUrl} 
+            alt={movie.title} 
+            className="hero-backdrop" 
+          />
+          <div className="hero-shade"></div>
+        </div>
+      ))}
+
+      {/* Flechas de Navegación */}
+      <button className="hero-arrow hero-arrow-prev" onClick={() => setCurrentIndex((prevIndex) => (prevIndex - 1 + movies.length) % movies.length)}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button className="hero-arrow hero-arrow-next" onClick={() => setCurrentIndex((prevIndex) => (prevIndex + 1) % movies.length)}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+
+      {/* Información de la Película Actual */}
+      <div className="hero-info">
+        {currentMovie.logoUrl ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={currentMovie.logoUrl} alt={cleanTitle(currentMovie.title)} className="hero-logo-img" />
+        ) : (
+          <h1 className="hero-title">{cleanTitle(currentMovie.title)}</h1>
+        )}
+
+        <div className="hero-meta">
+          <span className="hero-rating-circle">{currentMovie.rating || '7.5'}</span>
+          <span className="hero-dot">·</span>
+          <span className="hero-genres-text">{currentMovie.year || '2024'}</span>
+          <span className="hero-dot">·</span>
+          <span className="hero-genres-text">{currentMovie.duration || (currentMovie.type === 'series' ? 'Serie' : '1h 30m')}</span>
+          <span className="hero-dot">·</span>
+          <span className="hero-genres-text">{currentMovie.genres || 'Acción, Aventura'}</span>
+        </div>
+        
+        <Link href={`/movie/${currentMovie.id}`} className="hero-watch-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          VER AHORA
+        </Link>
+      </div>
+
+      {/* Miniaturas */}
+      <div className="hero-thumbs">
+        {movies.map((movie, index) => (
+          <button 
             key={movie.id} 
-            className={`carousel-slide ${isActive ? 'active' : ''}`}
+            className={`hero-thumb-btn ${index === currentIndex ? 'active' : ''}`}
+            onClick={() => setCurrentIndex(index)}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src={movie.bannerUrl || movie.coverUrl} 
-              alt={movie.title} 
-              className="hero-bg" 
-            />
-            <div className="hero-vignette"></div>
-
-            <div className="hero-content">
-              <h1 className="heading-ELPAPUCINEFILO hero-title">{movie.title}</h1>
-              <p className="hero-synopsis">
-                {movie.synopsis || "Narra la vida de los protagonistas más allá de sus mayores éxitos, recorriendo su trayectoria desde el descubrimiento de su extraordinario talento hasta convertirse en leyendas."}
-              </p>
-              <Link href={`/movie/${movie.id}`} className="btn-pill-white" style={{ pointerEvents: isActive ? 'auto' : 'none' }}>
-                <span className="btn-accent-line"></span> VER AHORA
-              </Link>
-            </div>
-          </div>
-        );
-      })}
-
-      {/* Navigation Dots */}
-      {movies.length > 1 && (
-        <div className="carousel-dots">
-          {movies.map((_, index) => (
-            <button
-              key={index}
-              className={`carousel-dot ${index === currentIndex ? 'active' : ''}`}
-              onClick={() => setCurrentIndex(index)}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
+            <img src={movie.coverUrl} alt={movie.title} />
+          </button>
+        ))}
+      </div>
     </section>
   );
 }

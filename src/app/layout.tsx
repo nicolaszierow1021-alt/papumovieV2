@@ -1,15 +1,29 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Banner from "@/components/Banner";
-import MobileBottomNav from "@/components/MobileBottomNav";
 import AdScript from "@/components/AdScript";
 
 const BASE_URL = 'https://papumoviemkv.store';
 
+export const viewport: Viewport = {
+  themeColor: '#141414',
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "PAPU MOVIE" },
+  icons: {
+    icon: [
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' }
+    ],
+    shortcut: '/favicon.ico',
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }
+    ]
+  },
   title: {
     default: 'PAPU MOVIE - Descargar Películas y Series HD',
     template: '%s | PAPU MOVIE',
@@ -77,15 +91,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" className="dark-mode">
       <head>
       </head>
       <body>
-        <Banner />
         <Header />
+        <Banner />
         <main>{children}</main>
         <Footer />
-        <MobileBottomNav />
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="https://tuxedoarbourannouncement.com/34/7e/82/347e823532a54f0fc9405265225f281e.js"></script>
       </body>

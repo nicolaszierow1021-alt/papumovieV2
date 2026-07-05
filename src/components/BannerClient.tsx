@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function BannerClient({ data }: { data: any }) {
+export default function BannerClient({ data }: { data: { text?: string; bgColor?: string; icon?: string; link?: string } }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
@@ -14,6 +14,7 @@ export default function BannerClient({ data }: { data: any }) {
     const isClosed = localStorage.getItem(bannerId);
 
     if (!isClosed) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setIsVisible(true);
     }
   }, [data]);
@@ -35,7 +36,7 @@ export default function BannerClient({ data }: { data: any }) {
 
   if (!isVisible) return null;
 
-  const getIcon = (iconName: string) => {
+  const getIcon = (iconName?: string) => {
     switch (iconName) {
       case 'telegram':
         return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>;
@@ -52,7 +53,7 @@ export default function BannerClient({ data }: { data: any }) {
     }
   };
 
-  const InnerContent = () => (
+  const renderInnerContent = () => (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', width: '100%' }}>
       {/* Icon */}
       <div style={{ 
@@ -174,9 +175,9 @@ export default function BannerClient({ data }: { data: any }) {
           box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.25) inset, 0 1px 1px rgba(255,255,255,0.3) inset !important;
         }
       `}</style>
-      {/* @ts-ignore */}
+
       <Wrapper {...wrapperProps} style={containerStyle}>
-        <InnerContent />
+        {renderInnerContent()}
       </Wrapper>
     </>
   );

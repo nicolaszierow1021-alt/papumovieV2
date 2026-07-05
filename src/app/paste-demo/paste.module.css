@@ -1,0 +1,215 @@
+.pasteContainer {
+  min-height: 100vh;
+  padding: 120px 4% 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: var(--bg-base);
+}
+
+.pasteCard {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  max-width: 1000px;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.posterSection {
+  flex: 0 0 350px;
+  position: relative;
+}
+
+.posterImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.contentSection {
+  flex: 1;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: white;
+  line-height: 1.2;
+}
+
+.metadata {
+  display: flex;
+  gap: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.badge {
+  background-color: var(--badge-bg);
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--badge-gold);
+  font-weight: 700;
+}
+
+.downloadOptionsTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.optionCard {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.optionCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);
+}
+
+.optionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.qualityRow {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.quality {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.langBadge {
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.details {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.server {
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.serverIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.size {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.downloadBtn {
+  background-color: var(--accent-primary);
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.downloadBtn:hover {
+  background-color: var(--accent-hover);
+  transform: scale(1.05);
+}
+
+.downloadBtnOutline {
+  background-color: transparent;
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 2px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.downloadBtnOutline:hover {
+  border-color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 900px) {
+  .pasteCard {
+    flex-direction: column;
+  }
+  .posterSection {
+    flex: none;
+    width: 100%;
+    height: 450px;
+  }
+  .optionCard {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+  .downloadBtn, .downloadBtnOutline {
+    width: 100%;
+    justify-content: center;
+  }
+}
