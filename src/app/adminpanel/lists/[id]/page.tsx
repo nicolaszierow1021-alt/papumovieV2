@@ -5,7 +5,16 @@ import { PREDEFINED_LISTS } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 export default async function ListDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const cookieStore = await cookies();
+  const isGeneralAdmin = cookieStore.get('papu_admin_auth')?.value === 'true';
+
+  if (!isGeneralAdmin) {
+    redirect('/adminpanel/banner');
+  }
   const resolvedParams = await params;
   const listId = resolvedParams.id;
 

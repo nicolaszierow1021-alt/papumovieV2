@@ -3,7 +3,16 @@ import { PREDEFINED_LISTS } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 export default async function ListsAdminPage() {
+  const cookieStore = await cookies();
+  const isGeneralAdmin = cookieStore.get('papu_admin_auth')?.value === 'true';
+
+  if (!isGeneralAdmin) {
+    redirect('/adminpanel/banner');
+  }
   return (
     <div style={{ color: '#fff' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>

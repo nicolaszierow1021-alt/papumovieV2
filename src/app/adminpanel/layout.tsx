@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import ClientLayout from './ClientLayout';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -8,7 +9,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   // Auth check — redirect to login if not authenticated
   if (!isGeneralAdmin && !isBannerAdmin) {
-    // Layout still renders; login page handles redirect
+    redirect('/login');
   }
 
   return (
