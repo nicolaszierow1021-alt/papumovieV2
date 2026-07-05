@@ -63,7 +63,7 @@ export default function MaintenanceBlocker({ active, message }: Props) {
       <div style={{ position: 'absolute', inset: 0, opacity: 0.1, backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '50px 50px', animation: 'floating 20s linear infinite' }} />
 
       <div style={{ position: 'relative', zIndex: 10, animation: 'pulseLogo 4s ease-in-out infinite', marginBottom: '3rem' }}>
-        <h1 className="heading-ELPAPUCINEFILO" style={{ fontSize: '5vw', minFontSize: '3rem', margin: 0, letterSpacing: '2px', color: '#E50914' }}>
+        <h1 className="heading-ELPAPUCINEFILO" style={{ fontSize: 'clamp(3rem, 5vw, 6rem)', margin: 0, letterSpacing: '2px', color: '#E50914' }}>
           PAPU MOVIE
         </h1>
       </div>
