@@ -57,6 +57,8 @@ function HeaderContent() {
   };
 
   const isSolid = !!(searchParams.get('filter') || searchParams.get('category') || searchParams.get('search'));
+  const isHomePage = pathname === '/';
+  const showHomeIcon = !isHomePage || isSolid;
   const showPresents = isSolid || pathname.startsWith('/movie');
 
   return (
@@ -70,12 +72,14 @@ function HeaderContent() {
               <path d="M3 12h18M3 6h18M3 18h18"/>
             </svg>
           </button>
-          <Link href="/" className="home-icon" onClick={triggerNavigation} aria-label="Home">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-              <polyline points="9 22 9 12 15 12 15 22"></polyline>
-            </svg>
-          </Link>
+          {showHomeIcon && (
+            <Link href="/" className="home-icon" onClick={triggerNavigation} aria-label="Home">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </Link>
+          )}
         </div>
 
         <Link href="/" className="site-logo" onClick={triggerNavigation}>

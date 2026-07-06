@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { cleanTitle } from '../utils/cleanTitle';
 
@@ -19,6 +19,7 @@ interface Movie {
 
 export default function HeroCarousel({ movies }: { movies: Movie[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const thumbsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!movies || movies.length <= 1) return;
@@ -27,6 +28,22 @@ export default function HeroCarousel({ movies }: { movies: Movie[] }) {
     }, 6000);
     return () => clearInterval(interval);
   }, [movies?.length]);
+
+  useEffect(() => {
+    if (thumbsRef.current) {
+      const activeThumb = document.getElementById(`hero-thumb-${currentIndex}`);
+      if (activeThumb) {
+        const container = thumbsRef.current;
+        const containerRect = container.getBoundingClientRect();
+        const thumbRect = activeThumb.getBoundingClientRect();
+        
+        // Only scroll if the thumbnail is partially or fully out of view
+        if (thumbRect.left < containerRect.left || thumbRect.right > containerRect.right) {
+          activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }
+    }
+  }, [currentIndex]);
 
   if (!movies || movies.length === 0) return null;
 
@@ -90,10 +107,11 @@ export default function HeroCarousel({ movies }: { movies: Movie[] }) {
       </div>
 
       {/* Miniaturas */}
-      <div className="hero-thumbs">
+      <div className="hero-thumbs" ref={thumbsRef}>
         {movies.map((movie, index) => (
           <button 
-            key={movie.id} 
+            key={movie.id}
+            id={`hero-thumb-${index}`}
             className={`hero-thumb-btn ${index === currentIndex ? 'active' : ''}`}
             onClick={() => setCurrentIndex(index)}
           >

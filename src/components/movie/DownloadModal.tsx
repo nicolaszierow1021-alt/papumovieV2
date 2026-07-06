@@ -103,10 +103,12 @@ export default function DownloadModal({ movieTitle, downloadLinks }: DownloadMod
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1rem',
                 padding: '0.75rem 0',
                 borderBottom: '1px solid #1a2332'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: '1 1 auto', minWidth: 0 }}>
                   <span style={{ 
                     backgroundColor: '#1a2332', 
                     border: '1px solid #243040',
@@ -116,11 +118,12 @@ export default function DownloadModal({ movieTitle, downloadLinks }: DownloadMod
                     padding: '4px 8px',
                     borderRadius: '6px',
                     letterSpacing: '0.5px',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    flexShrink: 0
                   }}>
                     {link.details || 'LINK'}
                   </span>
-                  <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem' }}>
+                  <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {link.server || 'Servidor'}
                   </span>
                 </div>
@@ -130,7 +133,7 @@ export default function DownloadModal({ movieTitle, downloadLinks }: DownloadMod
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{
-                    display: 'flex', alignItems: 'center', gap: '0.5rem',
+                    display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0,
                     backgroundColor: 'rgba(216, 190, 102, 0.05)',
                     border: '1px solid rgba(216, 190, 102, 0.3)',
                     color: '#d8be66',

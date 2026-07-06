@@ -228,8 +228,10 @@ export default async function MovieDetailsPage({ params }: { params: Promise<{ i
             <div className="movie-grid">
               {relatedMovies.map(related => (
                 <Link href={`/movie/${related.id}`} key={related.id} className="poster-card">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={related.bannerUrl || related.coverUrl} alt={related.title} />
+                  <picture>
+                    <source media="(max-width: 768px)" srcSet={related.coverUrl} />
+                    <img src={related.bannerUrl || related.coverUrl} alt={related.title} />
+                  </picture>
                   
                   <div className="card-overlay">
                     {related.logoUrl ? (
@@ -254,6 +256,21 @@ export default async function MovieDetailsPage({ params }: { params: Promise<{ i
                         {related.genres || 'Drama, Acción'}
                       </div>
                     </div>
+                  </div>
+                  
+                  <div className="poster-card-play">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+
+                  <div className="mobile-card-details">
+                    <div className="mobile-card-meta">
+                      <span className="mobile-rating">★ {related.rating || 'N/A'}</span>
+                      <span>{related.year || '2024'}</span>
+                    </div>
+                    <div className="mobile-card-genres">{related.genres || 'Drama, Acción'}</div>
+                    <div className="mobile-card-play-btn">VER AHORA ↗</div>
                   </div>
                 </Link>
               ))}

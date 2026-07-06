@@ -69,7 +69,7 @@ export default function MovieRow({ title, movies, isOverlapping = false }: { tit
                 <span>{movie.year || '2024'}</span>
               </div>
               <div className="mobile-card-genres">{movie.genres || 'Drama, Acción'}</div>
-              <div className="mobile-card-play-btn">JUGAR ↗</div>
+              <div className="mobile-card-play-btn">VER AHORA ↗</div>
             </div>
           </Link>
         ))}

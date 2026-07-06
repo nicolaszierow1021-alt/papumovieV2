@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 interface Props {
   active: boolean;
@@ -10,9 +11,71 @@ interface Props {
 
 export default function MaintenanceBlocker({ active, message }: Props) {
   const pathname = usePathname();
-  // Si está apagado o estamos en la ruta secreta, no mostramos el bloqueador
-  if (!active || (pathname && pathname.startsWith('/adminnico'))) {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
+  useEffect(() => {
+    if (active) {
+      const checkAdmin = async () => {
+        try {
+          // Primero intentamos con la sesión local (más rápido)
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user?.id === 'd382a3cc-4ff0-4bb2-bf47-4bfd6c69f099') {
+            setIsAdmin(true);
+          } else {
+            // Si no hay sesión o no es admin, verificamos con getUser por seguridad
+            const { data } = await supabase.auth.getUser();
+            if (data?.user?.id === 'd382a3cc-4ff0-4bb2-bf47-4bfd6c69f099') {
+              setIsAdmin(true);
+            }
+          }
+        } catch (error) {
+          console.error("Error verificando sesión de admin:", error);
+        } finally {
+          setIsChecking(false);
+        }
+      };
+
+      checkAdmin();
+
+      // Suscribirse a cambios de estado de autenticación (login, logout, refresh)
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user?.id === 'd382a3cc-4ff0-4bb2-bf47-4bfd6c69f099') {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      });
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    } else {
+      setIsChecking(false);
+    }
+  }, [active]);
+
+  useEffect(() => {
+    // Si el mantenimiento está activo, no es adminnico, y no es admin verificado (y ya terminó de verificar)
+    if (active && pathname && !pathname.startsWith('/adminnico') && !isAdmin && !isChecking) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [active, pathname, isAdmin, isChecking]);
+
+  // Si está apagado, o estamos en la ruta secreta, o el usuario es el Admin (ID verificado)
+  if (!active || (pathname && pathname.startsWith('/adminnico')) || isAdmin) {
     return null;
+  }
+
+  // Mientras verifica si es admin o no, mostramos un fondo negro para no revelar la web
+  if (isChecking) {
+    return <div style={{ position: 'fixed', inset: 0, zIndex: 999999, background: '#0a0a0a' }} />;
   }
 
   return (

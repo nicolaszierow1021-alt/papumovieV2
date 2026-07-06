@@ -126,7 +126,7 @@ button {
   font-size: 26px;
   font-weight: 400;
   letter-spacing: 6px;
-  color: #fff;
+  color: var(--text-primary, #fff);
   line-height: 1;
 }
 
@@ -135,7 +135,7 @@ button {
   font-size: 9px;
   font-weight: 500;
   letter-spacing: 8px;
-  color: #a0a0a0;
+  color: var(--text-secondary, #a0a0a0);
   margin-top: 4px;
   margin-left: 8px; /* Compensate for letter spacing */
 }
@@ -416,15 +416,19 @@ button {
   position: relative;
 }
 
-.poster-card > img {
+.poster-card > img,
+.poster-card picture,
+.poster-card picture img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: block;
 }
 
-.poster-card:hover > img {
+.poster-card:hover > img,
+.poster-card:hover picture img {
   transform: scale(1.05);
 }
 
@@ -566,6 +570,11 @@ button {
 html.light-mode {
   --bg-primary: #f0f2f5;
   --text-primary: #111111;
+  --text-secondary: rgba(0, 0, 0, 0.65);
+  --card-bg: rgba(0, 0, 0, 0.04);
+  --card-item-bg: rgba(0, 0, 0, 0.06);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --bg-secondary: rgba(0, 0, 0, 0.05);
 }
 
 html.light-mode body {
@@ -1087,6 +1096,67 @@ body {
   margin-bottom: 30px;
 }
 
+/* ==========================================================================
+   LIGHT MODE OVERRIDES FOR MOVIE DETAIL
+   ========================================================================== */
+html.light-mode .movie-detail-page {
+  background-color: var(--bg-primary);
+}
+
+html.light-mode .movie-player-overlay {
+  background: linear-gradient(0deg, rgba(240, 242, 245, 0.95) 0%, rgba(240, 242, 245, 0.5) 60%, rgba(240, 242, 245, 0) 100%);
+}
+
+html.light-mode .movie-player-title,
+html.light-mode .info-section h3,
+html.light-mode .director-info span,
+html.light-mode .cast-real-name,
+html.light-mode .premium-download-card h3,
+html.light-mode .spec-value,
+html.light-mode .premium-trailer-btn,
+html.light-mode .related-title,
+html.light-mode .server-badge {
+  color: var(--text-primary);
+  text-shadow: none;
+}
+
+html.light-mode .server-badge {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+html.light-mode .movie-player-info,
+html.light-mode .info-section p,
+html.light-mode .director-info,
+html.light-mode .cast-character-name,
+html.light-mode .spec-label {
+  color: var(--text-secondary);
+}
+
+html.light-mode .cast-avatar {
+  background: var(--bg-secondary);
+}
+
+html.light-mode .premium-download-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+html.light-mode .spec-item {
+  background: var(--card-item-bg);
+}
+
+html.light-mode .related-movies-section {
+  border-top-color: var(--border-color);
+}
+
+html.light-mode .premium-trailer-btn {
+  border-color: var(--border-color);
+}
+
+html.light-mode .premium-trailer-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .movie-content-grid {
@@ -1230,7 +1300,7 @@ body {
   }
   .hero-thumbs {
     bottom: 20px;
-    padding: 0 10px;
+    padding: 20px 10px 10px 10px;
     gap: 8px;
   }
   .hero-thumb-btn {
@@ -1288,7 +1358,7 @@ body {
     align-items: center;
     gap: 8px;
     font-size: 11px;
-    color: rgba(255,255,255,0.7);
+    color: var(--text-secondary, rgba(255,255,255,0.7));
     margin-bottom: 4px;
   }
   .mobile-rating {
@@ -1297,7 +1367,7 @@ body {
   }
   .mobile-card-genres {
     font-size: 10px;
-    color: rgba(255,255,255,0.5);
+    color: var(--text-secondary, rgba(255,255,255,0.5));
     margin-bottom: 8px;
     white-space: nowrap;
     overflow: hidden;
@@ -1307,10 +1377,90 @@ body {
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1px;
-    color: rgba(255,255,255,0.9);
+    color: var(--text-primary, rgba(255,255,255,0.9));
     display: inline-flex;
     align-items: center;
     gap: 4px;
     text-transform: uppercase;
+  }
+  
+  /* 1. Header Logo Overlap Fix */
+  .logo-main {
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
+  .home-icon {
+    display: none;
+  }
+
+  /* 2. Hero Thumbs Scrolling & Title Size */
+  .hero-title {
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
+  }
+  .hero-thumbs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-top: 20px;
+    padding-bottom: 10px; /* Space for touch */
+  }
+  .hero-thumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 3. Loader Animation Fix */
+  .glitch-logo {
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    letter-spacing: clamp(4px, 2vw, 15px);
+  }
+
+  /* 4. Movie Detail Page Mobile Layout */
+  .movie-player-wrapper {
+    padding: 0 15px;
+    margin-bottom: 20px;
+  }
+  .movie-detail-header-logo {
+    padding-top: 100px;
+    padding-bottom: 20px;
+  }
+  .detail-logo-img {
+    max-width: 80%;
+    max-height: 120px;
+  }
+  .detail-logo-text {
+    font-size: 2rem;
+  }
+  .movie-player-container {
+    border-radius: 8px;
+    aspect-ratio: 16 / 11; /* Make it taller on mobile */
+  }
+  .movie-player-overlay {
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 15px;
+  }
+  .movie-player-meta {
+    max-width: 100%;
+  }
+  .big-play-btn {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .big-play-btn:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  .movie-player-title {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+  }
+  .premium-download-card {
+    padding: 15px;
   }
 }
